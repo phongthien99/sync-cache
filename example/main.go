@@ -1,14 +1,14 @@
 package main
 
 import (
-	"cache"
 	"log"
+	cache "sync-cache"
 	"time"
 )
 
 func main() {
 	cache := cache.NewCache(100 * time.Microsecond)
-	cache.Set("test", "hello", 1*time.Second)
+	cache.Set("test", "hello", 2*time.Second)
 	value, err := cache.Get("test")
 	log.Print(value, err)
 	time.Sleep(3 * time.Second)
