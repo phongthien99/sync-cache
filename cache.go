@@ -1,4 +1,4 @@
-package cache
+package sync_cache
 
 import (
 	"sync"
@@ -27,12 +27,12 @@ func NewCache(cleanupInterval time.Duration) *Cache {
 	return cache
 }
 
-func (c *Cache) Get(key string) (any, error) {
+func (c *Cache) Get(key string) (any, bool) {
 	value, ok := c.data.Load(key)
 	if !ok {
-		return nil, ErrNotFound // Key not found
+		return nil, false // Key not found
 	}
-	return (value).(*CacheItem).Value, nil
+	return (value).(*CacheItem).Value, true
 }
 
 func (c *Cache) Set(key string, value any, d time.Duration) {
@@ -74,7 +74,7 @@ func (c *Cache) Size() int {
 func (c *Cache) work() {
 	now := time.Now().UnixNano()
 	c.data.Range(func(key, value any) bool {
-		var expiration = value.(int64)
+		var expiration = value.(*CacheItem).Expiration
 		if now > expiration && expiration != 0 {
 			c.Delete(key.(string))
 		}

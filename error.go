@@ -1,4 +1,4 @@
-package cache
+package sync_cache
 
 import "errors"
 
